@@ -6,8 +6,10 @@
 class ProbabilityMatrix
 {
 public:
-    // create new probability matrix with a string of letters to train for
-    ProbabilityMatrix(const std::string &accepted_chars);
+    ProbabilityMatrix();
+
+    // init probability matrix with a string of letters to train for
+    bool init(const std::string &accepted_chars);
 
     // train the probability matrix on a list of strings (good or bad)
     void train(const std::vector<std::string> &data, bool good);
@@ -30,25 +32,11 @@ private:
     // normalize the matrix
     bool normalize();
 
-    // load a training file
-    std::vector<std::string> load_file(const std::string &filename);
-
-    // normalize training data so that only the supported characters are trained
-    std::string normalize_string(const std::string &line);
-
 private:
     // a string of acceptable letters
     std::string m_accepted_chars;
-    // the size of a row
-    size_t m_rowsize;
-    // the size of the full matrix
-    size_t m_fullsize;
-    // a map for all ascii letters, where the index is a letter and
-    // the value stored there is an index in the m_accepted_chars string
-    // this is because the m_accepted_chars string defines the width of
-    // the data matrix via it's string length. The accepted_charmap allows
-    // for O(1) conversion from a letter into an index in m_accepted_chars
-    // which is equivalent to an x or y position in the matrix
+    // a map of accepted chars to indexes in m_accepted_chars, like doing
+    // array_flip in php
     uint8_t m_accepted_charmap[256];
     // the data matrix
     double *m_data;

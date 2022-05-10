@@ -7,12 +7,10 @@
 
 class GibberishDetector
 {
-    static const std::string accepted_chars;
-
 public:
     GibberishDetector();
 
-    void init();
+    bool init(const std::string &accepted);
     
     bool is_gibberish(const std::string &str) const;
 
@@ -24,6 +22,12 @@ private:
     ProbabilityMatrix m_probmat;
     // the threshold for average character transition being gibberish
     double m_threshold;
+
+    // string of accepted characters
+    std::string m_accepted_chars;
+
+    // map of which characters are allowed, like an array_flip() of m_accepted_chars
+    bool m_allowed_charmap[256];
 };
 
 

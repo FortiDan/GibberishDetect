@@ -2,22 +2,28 @@
 
 using namespace std;
 
-ProbabilityMatrix::ProbabilityMatrix(const string &accepted_chars) :
-    m_rowsize(256),
-    m_fullsize(m_rowsize * m_rowsize),
-    m_accepted_chars(accepted_chars),
+#define ROW_SIZE 256
+#define FULL_SIZE (ROW_SIZE * ROW_SIZE)
+
+ProbabilityMatrix::ProbabilityMatrix() :
+    m_accepted_chars(),
     m_accepted_charmap(),
     m_data(nullptr)
 {
-    if (m_accepted_chars.length() > 256) {
+}
+
+bool ProbabilityMatrix::init(const string &accepted)
+{
+    if (accepted.length() > 256) {
         // ERROR: impossible
+        return false;
     }
-    if (m_fullsize < m_rowsize) {
-        // ERROR: overflow too big
-    }
-    m_data = new double[m_fullsize];
+    m_accepted_chars = accepted;
+
+    m_data = new double[FULL_SIZE];
     if (!m_data) {
         // ERROR: allocation
+        return false;
     }
     memset(m_accepted_charmap, 0, sizeof(m_accepted_charmap));
     size_t i = 0;
@@ -29,9 +35,10 @@ ProbabilityMatrix::ProbabilityMatrix(const string &accepted_chars) :
         m_accepted_charmap[c] = (uint8_t)i;
     }
     // init the matrix to all 10s to start
-    for (i = 0; i < m_fullsize; ++i) {
+    for (i = 0; i < FULL_SIZE; ++i) {
         m_data[i] = 10.0;
     }
+    return true;
 }
 
 void ProbabilityMatrix::train(const vector<string> &data, bool good)
@@ -97,34 +104,34 @@ uint8_t ProbabilityMatrix::accepted_char(uint8_t c) const
 
 void ProbabilityMatrix::sub(uint32_t x, uint32_t y, double value)
 {
-    if (!m_data || !m_rowsize) {
+    if (!m_data) {
         return;
     }
-    m_data[(m_rowsize * y) + x] -= value;
+    m_data[(ROW_SIZE * y) + x] -= value;
 }
 
 void ProbabilityMatrix::add(uint32_t x, uint32_t y, double value)
 {
-    if (!m_data || !m_rowsize) {
+    if (!m_data) {
         return;
     }
-    m_data[(m_rowsize * y) + x] += value;
+    m_data[(ROW_SIZE * y) + x] += value;
 }
 
 void ProbabilityMatrix::set(uint32_t x, uint32_t y, double value)
 {
-    if (!m_data || !m_rowsize) {
+    if (!m_data) {
         return;
     }
-    m_data[(m_rowsize * y) + x] = value;
+    m_data[(ROW_SIZE * y) + x] = value;
 }
 
 double ProbabilityMatrix::get(uint32_t x, uint32_t y) const
 {
-    if (!m_data || !m_rowsize) {
+    if (!m_data) {
         return 0;
     }
-    return m_data[(m_rowsize * y) + x];
+    return m_data[(ROW_SIZE * y) + x];
 }
 
 bool ProbabilityMatrix::normalize()
@@ -137,9 +144,9 @@ bool ProbabilityMatrix::normalize()
     double sum = 0.0;
     size_t i = 0;
     size_t j = 0;
-    for (i = 0; i < m_rowsize; ++i) {
+    for (i = 0; i < ROW_SIZE; ++i) {
         sum = 0.0;
-        for (j = 0; j < m_rowsize; ++j) {
+        for (j = 0; j < ROW_SIZE; ++j) {
             double dprobmat = get(i, j);
             sum += dprobmat;
             if (dprobmat != 0.0) {
@@ -147,7 +154,7 @@ bool ProbabilityMatrix::normalize()
             }
         }
         //printf("j / sum: %f     log(j / sum): %f\n", j / sum, log(j / sum));
-        for (j = 0; j < m_rowsize; ++j) {
+        for (j = 0; j < ROW_SIZE; ++j) {
             set(i, j, log(j / sum));
         }
     }

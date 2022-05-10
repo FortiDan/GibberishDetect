@@ -19,15 +19,15 @@ TestCase testCases[] = {
 
 #define NUM_CASES (sizeof(testCases) / sizeof(testCases[0]))
 
+const char accepted_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
+
 int main(int argc, char *argv[])
 {
     GibberishDetector detector;
-
-    detector.init();
-
+    detector.init(accepted_chars);
     for (int i = 0; i < NUM_CASES; ++i) {
         bool is_gib = detector.is_gibberish(testCases[i].str);
-        printf("Testing [%s]: %s", testCases[i].str, is_gib ? "GIBBERISH" : "English");
+        printf("Testing [%s]: %s\n", testCases[i].str, is_gib ? "GIBBERISH" : "English");
         assert(is_gib == testCases[i].expected_result);
     }
 
