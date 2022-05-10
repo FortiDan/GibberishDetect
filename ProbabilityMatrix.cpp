@@ -14,7 +14,7 @@ ProbabilityMatrix::ProbabilityMatrix() :
 
 bool ProbabilityMatrix::init(const string &accepted)
 {
-    if (accepted.length() > 256) {
+    if (accepted.length() > ROW_SIZE) {
         // ERROR: impossible
         return false;
     }
@@ -155,7 +155,7 @@ bool ProbabilityMatrix::normalize()
         }
         //printf("j / sum: %f     log(j / sum): %f\n", j / sum, log(j / sum));
         for (j = 0; j < ROW_SIZE; ++j) {
-            set(i, j, log(j / sum));
+            set(i, j, log(get(i, j) / sum));
         }
     }
     return true;

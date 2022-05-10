@@ -9,17 +9,18 @@ struct TestCase {
 
 TestCase testCases[] = {
     { "Hello World", false },
+    { "Test", false },
     { "Hello", false },
     { "yes", false },
     { "FunctionName", false },
-    { "aSwHGsd", true },
+    { "aSasdffffwHGsd", true },
     { "hgfRTFs", true },
     { "bcv3Hgf", true },
 };
 
 #define NUM_CASES (sizeof(testCases) / sizeof(testCases[0]))
 
-const char accepted_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
+const char accepted_chars[] = "abcdefghijklmnopqrstuvwxyz ";
 
 int main(int argc, char *argv[])
 {

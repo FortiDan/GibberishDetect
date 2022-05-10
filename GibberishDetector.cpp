@@ -86,7 +86,9 @@ bool GibberishDetector::init(const std::string &accepted)
 
 bool GibberishDetector::is_gibberish(const string &str) const
 {
-    return (m_probmat.avg_trans(normalize_string(str)) < m_threshold);
+    double avg = m_probmat.avg_trans(normalize_string(str));
+    printf("Average for [%s]: %f\n", str.c_str(), avg);
+    return (avg < m_threshold);
 }
 
 
@@ -109,15 +111,15 @@ vector<string> GibberishDetector::load_file(const string &filename) const
     printf("Exploding by lines...\n");
     string::size_type pos = 0;
     string::size_type prev = 0;
-    while ((pos = data.find('\n', prev)) != string::npos) {
-        string line = data.substr(prev, pos - prev);
+    while ((pos = norm_data.find('\n', prev)) != string::npos) {
+        string line = norm_data.substr(prev, pos - prev);
         if (line.length() > 0) {
             data_list.push_back(line);
         }
         prev = pos + 1;
     }
     // final line, usually empty
-    string line = data.substr(prev);
+    string line = norm_data.substr(prev);
     if (line.length() > 0) {
         data_list.push_back(line);
     }
